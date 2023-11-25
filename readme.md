@@ -44,4 +44,8 @@ Go to your ros2_ws, build the package and source install/setup.bash.
 cd ~/ros2_ws
 colcon build --packages-select gazebo_project && source install/setup.bash
 ```
-
+Run the launch file.
+```bash
+ros2 launch gazebo_project rviz.launch.py
+```
+Add set fixed frame to `link_chassis` and add RobotModel visualization. 
