@@ -210,7 +210,6 @@
     <parent link="link_chassis" />
     <axis rpy="0 0 0" xyz="0 -1 0" />
     <limit effort="100000" velocity="1000" upper="0.8727" lower="-0.8727" />
-    <!-- <joint_properties damping="1.0" friction="1.0" /> -->
   </joint>
 
   <joint type="revolute" name="front_right_wheel_rotating_joint">
@@ -266,6 +265,5 @@
       <topic>imu</topic>
     </sensor>
   </gazebo>
-
 
 </robot>
