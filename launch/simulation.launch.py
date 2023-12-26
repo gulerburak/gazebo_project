@@ -7,14 +7,11 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, SetParameter
 
 
-# ROS2 Launch System will look for this function definition #
 def generate_launch_description():
-    # Get Package Description and Directory #
     package_description = "gazebo_project"
     package_directory = get_package_share_directory(package_description)
 
-    # Set the Path to Robot Mesh Models for Loading in Gazebo Sim #
-    # NOTE: Do this BEFORE launching Gazebo Sim #
+    # Set the Path to Robot Mesh Models for Loading in Gazebo Sim
     install_dir_path = get_package_prefix(package_description) + "/share"
     robot_meshes_path = os.path.join(package_directory, "meshes")
     gazebo_resource_paths = [install_dir_path, robot_meshes_path]
@@ -25,14 +22,7 @@ def generate_launch_description():
     else:
         os.environ["IGN_GAZEBO_RESOURCE_PATH"] = ":".join(gazebo_resource_paths)
 
-    # Load Empty World SDF from Gazebo Sim Package #
-    # world_file = "empty.sdf"
-    # world_config = LaunchConfiguration("world")
-    # declare_world_arg = DeclareLaunchArgument(
-    #     "world", default_value=["-r ", world_file], description="SDF World File"
-    # )
-
-    # Load Demo World SDF from Robot Description Package #
+    # Load Demo World SDF from Robot Description Package
     world_file = "demo_world.sdf"
     world_file_path = os.path.join(package_directory, "worlds", world_file)
     world_config = LaunchConfiguration("world")
@@ -40,7 +30,7 @@ def generate_launch_description():
         "world", default_value=["-r ", world_file_path], description="SDF World File"
     )
 
-    # Declare GazeboSim Launch #
+    # Declare Gazebo Sim Launch file
     gzsim_pkg = get_package_share_directory("ros_gz_sim")
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -49,12 +39,10 @@ def generate_launch_description():
         launch_arguments={"gz_args": world_config}.items(),
     )
 
-    # Load URDF File #
+    # Load the urdf
     urdf_file = "robot.urdf"
     robot_desc_path = os.path.join(package_directory, "urdf", urdf_file)
-    print("URDF Loaded !")
 
-    # Robot State Publisher (RSP) #
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -69,7 +57,7 @@ def generate_launch_description():
         ],
     )
 
-    # Spawn the Robot #
+    # declare robot spawn position
     declare_spawn_x = DeclareLaunchArgument(
         "x", default_value="0.0", description="Model Spawn X Axis Value"
     )
@@ -113,17 +101,15 @@ def generate_launch_description():
             + "@sensor_msgs/msg/JointState"
             + "[ignition.msgs.Model",
             "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
-            # "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
+            "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
         ],
         output="screen",
     )
 
-    # Create and Return the Launch Description Object #
     return LaunchDescription(
         [
-            declare_world_arg,
-            # Sets use_sim_time for all nodes started below (doesn't work for nodes started from ignition gazebo) #
             SetParameter(name="use_sim_time", value=True),
+            declare_world_arg,
             gz_sim,
             robot_state_publisher_node,
             declare_spawn_x,
