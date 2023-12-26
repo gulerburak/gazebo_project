@@ -1,10 +1,20 @@
 # Gazebo Tutorial Course 
 
+## Contents
+- [Dependencies](#dependencies)
+- [Creating the ros package](#creating-the-ros-package)
+- [Creating the robot](#creating-the-robot)
+- [Creating the Simulation World](#creating-the-simulation-world)
+- [Simulation Launch File](#simulation-launch-file)
+- [Building](#building-and-testing)
+
+
 ## Dependencies
 
 You need to install ROS 2 humble and Gazebo Sim for this project.
-    - [ROS2 Humble installation instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
-    - [Gazebo Sim installation instructions](https://gazebosim.org/docs/harmonic/install_ubuntu)
+
+- [ROS2 Humble installation instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
+- [Gazebo Sim installation instructions](https://gazebosim.org/docs/harmonic/install_ubuntu)
 ## Creating the ros package
 Go to the your ros2 workspace and create a Python package. `urdf` and `xacro` packages are dependencies of this package.
 ```bash
@@ -371,7 +381,13 @@ Adding IMU Sensor plugin
     </sensor>
   </gazebo>
 ```
-Our car is created. To test it, fill the `rviz.launch.py` with following lines:
+Our car is created. To test it, fill the `rviz.launch.py` with following lines.
+This launch file runs 3 nodes:
+
+- Robot State Publisher with robot URDF
+- Joint State Publisher to create initial joint states
+- RVIZ2 to visualize URDF with joint states
+
 ```python
 import os
 from ament_index_python.packages import get_package_share_directory
@@ -429,13 +445,170 @@ def generate_launch_description():
     )
 ```
 
-Do the [Building and testing steps](#building)
+Do the [Building and testing steps](#building-and-testing) to test the URDF file.
 
 --- 
 # Creating the Simulation World
+Inside of the `worlds/demo_world.sdf` file, add the xml, sdf and world tags. World's name will be `demo_world`
+
+```xml
+<?xml version="1.0"?>
+<sdf version="1.8">
+    <world name="demo_world">
+          <!-- Rest of the pieces -->
+    </world>
+</sdf>
+```
+
+**The rest of pieces will be added inside the `<world></world>` tag.**
+
+Adding simulation step size and real-time factor:
+
+```xml
+        <physics name="1ms" type="ignored">
+            <max_step_size>0.01</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+```
+
+Adding essintial plugins:
+
+```xml
+        <plugin
+            filename="libignition-gazebo-physics-system.so"
+            name="ignition::gazebo::systems::Physics">
+        </plugin>
+
+        <plugin
+            filename="libignition-gazebo-user-commands-system.so"
+            name="ignition::gazebo::systems::UserCommands">
+        </plugin>
+
+        <plugin
+            filename="libignition-gazebo-scene-broadcaster-system.so"
+            name="ignition::gazebo::systems::SceneBroadcaster">
+        </plugin>
+```
+
+Adding the gravity, magnetic field and atmosphere properties.
+
+```xml
+        <gravity>0 0 -9.8</gravity>
+        <magnetic_field>5.565e-06 2.289e-05 -4.239e-05</magnetic_field>
+        <atmosphere type='adiabatic' />
+```
+
+Adding the world's background color and light, enabling shadows of it.
+
+```xml
+
+        <scene>
+            <ambient>0.4 0.4 0.4 1</ambient>
+            <background>0.7 0.7 0.7 1</background>
+            <shadows>true</shadows>
+        </scene>
+```
+
+Adding the 100x100 ground plane:
+
+```xml
+        <model name='ground_plane'>
+            <pose>0 0 0 0 0 0</pose>
+            <self_collide>false</self_collide>
+            <static>true</static>
+            <link name='ground'>
+                <pose>0 0 0 0 0 0</pose>
+                <enable_wind>false</enable_wind>
+                <visual name='visual'>
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <ambient>0.8 0.8 0.8 1</ambient>
+                        <diffuse>0.8 0.8 0.8 1</diffuse>
+                        <specular>0.8 0.8 0.8 1</specular>
+                        <emissive>0.0 0.0 0.0 1</emissive>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <surface>
+                        <friction>
+                            <ode>
+                            </ode>
+                        </friction>
+                        <bounce />
+                        <contact />
+                    </surface>
+                </collision>
+                <inertial>
+                    <pose>0 0 0 0 0 0</pose>
+                    <mass>1</mass>
+                    <inertia>
+                        <ixx>1</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>1</iyy>
+                        <iyz>0</iyz>
+                        <izz>1</izz>
+                    </inertia>
+                </inertial>
+            </link>
+        </model>
+```
+
+Adding the directional light named sun to 10m above:
+
+```xml
+        <light type="directional" name="sun">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.1 -0.9</direction>
+        </light>
+```
+
+Add the apartment model 20 away through x-axis.
+
+```xml
+        <include>
+            <uri>
+                https://fuel.gazebosim.org/1.0/chapulina/models/Apartment
+            </uri>
+            <name>apartment</name>
+            <pose>20 0 0 0 0 0</pose>
+        </include>
+```
+
+Simulation world is prepared now. To test it, we need to create a launch file to start the simulation.
 
 ---
-# Building 
+## Simulation Launch File
+To launch the simulation, fill the `simulation.launch.py` with following lines.
+This launch file launches 1 launch file and runs 3 nodes:
+- Gazebo Sim launch file starts the simulation with given world file, in this case `demo_world.sdf`.
+- Robot State Publisher publishes the robot URDF `robot.urdf`
+- Gazebo Sim Create node spawns the robot published from robot state publisher to the sim world with specified name and coordinates
+- Gazebo Bridge creates a communication bridge between ros and gazebo to send messages like `/cmd_vel` `/imu` etc.
+
+
+---
+## Building and Testing
 
 To build the project, it is needed to add the new directories to the `setup.py`
 
@@ -470,6 +643,3 @@ ros2 launch gazebo_project simulation.launch.py
 ```
 
 Do not run these 2 launch files at the same time.
-
-
-
