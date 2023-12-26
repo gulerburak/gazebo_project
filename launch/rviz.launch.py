@@ -45,7 +45,6 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    # Create and Return the Launch Description Object #
     return LaunchDescription(
         [
             joint_state_publisher_node,
