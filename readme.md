@@ -18,7 +18,7 @@ You need to install ROS 2 humble and Gazebo Sim for this project.
 
 ROS2 Package dependencies
 ```bash
-sudo apt install ros-humble-ros-gz-sim ros-humble-ros-gz-bridge ros-humble-xacro```
+sudo apt install ros-humble-ros-gz-sim ros-humble-ros-gz-bridge ros-humble-xacro ros-humble-joint-state-publisher*```
 
 ## Creating the ros package
 Go to the your ros2 workspace and create a Python package. `urdf` and `xacro` packages are dependencies of this package.
