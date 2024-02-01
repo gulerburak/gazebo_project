@@ -97,13 +97,128 @@ def generate_launch_description():
             "/cmd_vel" + "@geometry_msgs/msg/Twist" + "@ignition.msgs.Twist",
             "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.Pose_V",
             "/odom" + "@nav_msgs/msg/Odometry" + "[ignition.msgs.Odometry",
-            "/world/empty/model/my_robot/joint_state"
+            "/world/demo_world/model/my_robot/joint_state"
             + "@sensor_msgs/msg/JointState"
             + "[ignition.msgs.Model",
             "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
             "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
         ],
+        remappings=[
+            ("/world/demo_world/model/my_robot/joint_state", "/joint_states"),
+        ],
         output="screen",
+    )
+
+    cam_tf_node = Node(
+        name="camera_stf",
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        output="screen",
+        arguments=[
+            "0",
+            "0",
+            "0",
+            "1.5707",
+            "-1.5707",
+            "0",
+            "oakd_rgb_camera_optical_frame",
+            "/my_robot/oakd_rgb_camera_frame/rgbd_camera",
+        ],
+        remappings=[
+            ("/tf", "tf"),
+            ("/tf_static", "tf_static"),
+        ],
+    )
+
+    world = "demo_world"
+    robot_name = "my_robot"
+
+    oakd_camera_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        name="camera_bridge",
+        output="screen",
+        parameters=[{"use_sim_time": True}],
+        arguments=[
+            [
+                "/world/",
+                world,
+                "/model/",
+                robot_name,
+                "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/image"
+                + "@sensor_msgs/msg/Image"
+                + "[ignition.msgs.Image",
+            ],
+            [
+                "/world/",
+                world,
+                "/model/",
+                robot_name,
+                "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/depth_image"
+                + "@sensor_msgs/msg/Image"
+                + "[ignition.msgs.Image",
+            ],
+            [
+                "/world/",
+                world,
+                "/model/",
+                robot_name,
+                "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/points"
+                + "@sensor_msgs/msg/PointCloud2"
+                + "[ignition.msgs.PointCloudPacked",
+            ],
+            [
+                "/world/",
+                world,
+                "/model/",
+                robot_name,
+                "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/camera_info"
+                + "@sensor_msgs/msg/CameraInfo"
+                + "[ignition.msgs.CameraInfo",
+            ],
+        ],
+        remappings=[
+            (
+                [
+                    "/world/",
+                    world,
+                    "/model/",
+                    robot_name,
+                    "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/image",
+                ],
+                "oakd/rgb/preview/image_raw",
+            ),
+            (
+                [
+                    "/world/",
+                    world,
+                    "/model/",
+                    robot_name,
+                    "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/depth_image",
+                ],
+                "oakd/rgb/preview/depth_image",
+            ),
+            (
+                [
+                    "/world/",
+                    world,
+                    "/model/",
+                    robot_name,
+                    "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/points",
+                ],
+                "oakd/rgb/preview/point_cloud",
+            ),
+            (
+                [
+                    "/world/",
+                    world,
+                    "/model/",
+                    robot_name,
+                    "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/camera_info",
+                ],
+                "oakd/rgb/preview/camera_info",
+            ),
+        ],
     )
 
     return LaunchDescription(
@@ -117,5 +232,7 @@ def generate_launch_description():
             declare_spawn_z,
             gz_spawn_entity,
             ign_bridge,
+            # cam_tf_node,
+            oakd_camera_bridge,
         ]
     )

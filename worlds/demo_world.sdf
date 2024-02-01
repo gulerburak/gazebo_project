@@ -24,6 +24,12 @@
             name="ignition::gazebo::systems::SceneBroadcaster">
         </plugin>
 
+        <plugin
+            filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+
         <gravity>0 0 -9.8</gravity>
         <magnetic_field>5.565e-06 2.289e-05 -4.239e-05</magnetic_field>
         <atmosphere type='adiabatic' />

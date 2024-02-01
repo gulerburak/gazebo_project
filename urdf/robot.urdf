@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 
-<robot name="robot">
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find gazebo_project)/urdf/oakd.urdf.xacro" />
+  <xacro:property name="oakd_pro_x_offset" value="0.5" />
+  <xacro:property name="oakd_pro_y_offset" value="0.0" />
+  <xacro:property name="oakd_pro_z_offset" value="1.5" />
 
   <link name="base_link"></link>
 
@@ -220,6 +224,11 @@
     <limit lower="-1.79769e+308" upper="1.79769e+308" effort="100000" velocity="1000" />
     <joint_properties damping="1.0" friction="1.0" />
   </joint>
+
+  <xacro:oakd model="pro" parent_link="link_chassis">
+    <origin xyz="${oakd_pro_x_offset} ${oakd_pro_y_offset} ${oakd_pro_z_offset}" />
+  </xacro:oakd>
+
 
   <!-- Ackermann steering plugin -->
   <gazebo>
