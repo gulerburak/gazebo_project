@@ -3,49 +3,7 @@
 <sdf version="1.8">
 
     <world name="demo_world">
-
-        <physics name="1ms" type="ignored">
-            <max_step_size>0.01</max_step_size>
-            <real_time_factor>1.0</real_time_factor>
-        </physics>
-
-        <plugin
-            filename="libignition-gazebo-physics-system.so"
-            name="ignition::gazebo::systems::Physics">
-        </plugin>
-
-        <plugin
-            filename="libignition-gazebo-user-commands-system.so"
-            name="ignition::gazebo::systems::UserCommands">
-        </plugin>
-
-        <plugin
-            filename="libignition-gazebo-scene-broadcaster-system.so"
-            name="ignition::gazebo::systems::SceneBroadcaster">
-        </plugin>
-
-        <plugin
-            filename="gz-sim-sensors-system"
-            name="gz::sim::systems::Sensors">
-            <render_engine>ogre2</render_engine>
-        </plugin>
-
-        <gravity>0 0 -9.8</gravity>
-        <magnetic_field>5.565e-06 2.289e-05 -4.239e-05</magnetic_field>
-        <atmosphere type='adiabatic' />
-
-        <scene>
-            <ambient>0.4 0.4 0.4 1</ambient>
-            <background>0.7 0.7 0.7 1</background>
-            <shadows>true</shadows>
-        </scene>
-
-
-        <!-- <gui fullscreen="0">
-            <plugin filename="EntityTree" name="Entity tree">
-            </plugin>
-        </gui> -->
-
+        <!-- Ground Plane -->
         <model name='ground_plane'>
             <pose>0 0 0 0 0 0</pose>
             <self_collide>false</self_collide>
@@ -57,7 +15,7 @@
                     <geometry>
                         <plane>
                             <normal>0 0 1</normal>
-                            <size>100 100</size>
+                            <size>1000 1000</size>
                         </plane>
                     </geometry>
                     <material>
@@ -71,7 +29,7 @@
                     <geometry>
                         <plane>
                             <normal>0 0 1</normal>
-                            <size>100 100</size>
+                            <size>1000 1000</size>
                         </plane>
                     </geometry>
                     <surface>
@@ -98,6 +56,7 @@
             </link>
         </model>
 
+        <!-- Light -->
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>
             <pose>0 0 10 0 0 0</pose>
@@ -112,7 +71,7 @@
             <direction>-0.5 0.1 -0.9</direction>
         </light>
 
-
+        <!-- Apartment Model -->
         <include>
             <uri>
                 https://fuel.gazebosim.org/1.0/chapulina/models/Apartment
@@ -120,7 +79,5 @@
             <name>apartment</name>
             <pose>20 0 0 0 0 0</pose>
         </include>
-
     </world>
-
 </sdf>
