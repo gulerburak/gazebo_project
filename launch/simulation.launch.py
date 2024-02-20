@@ -186,7 +186,7 @@ def generate_launch_description():
                     robot_name,
                     "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/image",
                 ],
-                "oakd/rgb/preview/image_raw",
+                "oakd/rgb/image_raw",
             ),
             (
                 [
@@ -196,7 +196,7 @@ def generate_launch_description():
                     robot_name,
                     "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/depth_image",
                 ],
-                "oakd/rgb/preview/depth_image",
+                "oakd/rgb/depth",
             ),
             (
                 [
@@ -206,7 +206,7 @@ def generate_launch_description():
                     robot_name,
                     "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/points",
                 ],
-                "oakd/rgb/preview/point_cloud",
+                "oakd/rgb/depth/points",
             ),
             (
                 [
@@ -216,7 +216,7 @@ def generate_launch_description():
                     robot_name,
                     "/link/oakd_rgb_camera_frame/sensor/rgbd_camera/camera_info",
                 ],
-                "oakd/rgb/preview/camera_info",
+                "oakd/rgb/camera_info",
             ),
         ],
     )
@@ -232,7 +232,7 @@ def generate_launch_description():
             declare_spawn_z,
             gz_spawn_entity,
             ign_bridge,
-            # cam_tf_node,
+            cam_tf_node,
             oakd_camera_bridge,
         ]
     )
