@@ -2,11 +2,14 @@
 
 <robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find gazebo_project)/urdf/oakd.urdf.xacro" />
+  <xacro:include filename="$(find gazebo_project)/urdf/common_properties.urdf.xacro" />
   <xacro:property name="oakd_pro_x_offset" value="0.5" />
   <xacro:property name="oakd_pro_y_offset" value="0.0" />
   <xacro:property name="oakd_pro_z_offset" value="1.5" />
 
-  <link name="base_link"></link>
+  <link name="base_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
 
   <joint name="joint_base_link_chassis" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0" />
@@ -15,19 +18,6 @@
   </joint>
 
   <link name="link_chassis">
-    <inertial>
-      <mass value="500.0" />
-      <origin xyz="0 0 0.46" rpy="0 0 0" />
-      <inertia ixx="1000.0" ixy="0.0" iyy="200.0" ixz="0.0" iyz="0.0" izz="1000.0" />
-    </inertial>
-
-    <collision>
-      <origin xyz="0 0 0.625" rpy="0 0 0" />
-      <geometry>
-        <box size="1.0 1.0 0.5" />
-      </geometry>
-    </collision>
-
     <visual name="chassis_visual">
       <origin rpy="1.57 0 1.57" xyz="0 0 0" />
       <geometry>
@@ -40,13 +30,22 @@
         <color rgba="0.9 0.9 0.9 1.0" />
       </material>
     </visual>
+
+    <collision>
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+      <geometry>
+        <box size="2.4 1.0 1.0" />
+      </geometry>
+    </collision>
+
+    <xacro:inertial_cuboid_with_pose mass="500.0" x="2.4" y="1.0" z="1.0">
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+    </xacro:inertial_cuboid_with_pose>
   </link>
 
   <link name="rear_left_wheel">
-    <inertial>
-      <mass value="11.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
 
     <visual name="rear_left_wheel_visual">
       <geometry>
@@ -68,6 +67,7 @@
         </ode>
       </friction>
     </collision>
+
   </link>
 
 
@@ -83,10 +83,13 @@
 
   <!-- Rear Right Wheel -->
   <link name="rear_right_wheel">
-    <inertial>
+    <!-- <inertial>
       <mass value="11.0" />
       <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    </inertial> -->
+
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
 
     <visual name="rear_right_wheel_visual">
       <geometry>
@@ -122,10 +125,13 @@
 
   <!-- Front Left Wheel -->
   <link name="front_left_wheel">
-    <inertial>
+    <!-- <inertial>
       <mass value="11.0" />
       <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    </inertial> -->
+
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
 
     <visual name="front_left_wheel_visual">
       <geometry>
@@ -150,10 +156,7 @@
   </link>
 
   <link name="front_left_wheel_steering_link">
-    <inertial>
-      <mass value="1.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
   </link>
 
   <joint type="revolute" name="front_left_wheel_steering_joint">
@@ -174,10 +177,13 @@
 
   <!-- Front Right Wheel -->
   <link name="front_right_wheel">
-    <inertial>
+    <!-- <inertial>
       <mass value="11.0" />
       <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    </inertial> -->
+
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
 
     <visual name="front_right_wheel_visual">
       <geometry>
@@ -202,10 +208,12 @@
   </link>
 
   <link name="front_right_wheel_steering_link">
-    <inertial>
+    <!-- <inertial>
       <mass value="1.0" />
       <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    </inertial> -->
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+
   </link>
 
   <joint type="revolute" name="front_right_wheel_steering_joint">
@@ -275,4 +283,12 @@
     </sensor>
   </gazebo>
 
+  <gazebo>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+  </gazebo>
 </robot>
