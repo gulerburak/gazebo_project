@@ -101,10 +101,14 @@ def generate_launch_description():
             + "@sensor_msgs/msg/JointState"
             + "[ignition.msgs.Model",
             "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
-            "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
+            # "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
+            "/world/demo_world/pose/info"
+            + "@geometry_msgs/msg/PoseArray"
+            + "[ignition.msgs.Pose_V",
         ],
         remappings=[
             ("/world/demo_world/model/my_robot/joint_state", "/joint_states"),
+            ("/world/demo_world/pose/info", "/pose_info"),
         ],
         output="screen",
     )
