@@ -23,7 +23,9 @@ def generate_launch_description():
         os.environ["IGN_GAZEBO_RESOURCE_PATH"] = ":".join(gazebo_resource_paths)
 
     # Load Demo World SDF from Robot Description Package
-    world_file = "demo_world.sdf"
+    world = "demo_world"
+
+    world_file = f"{world}.sdf"
     world_file_path = os.path.join(package_directory, "worlds", world_file)
     world_config = LaunchConfiguration("world")
     declare_world_arg = DeclareLaunchArgument(
@@ -67,6 +69,15 @@ def generate_launch_description():
     declare_spawn_z = DeclareLaunchArgument(
         "z", default_value="0.5", description="Model Spawn Z Axis Value"
     )
+    declare_spawn_R = DeclareLaunchArgument(
+        "R", default_value="0.0", description="Model Spawn Roll Value"
+    )
+    declare_spawn_P = DeclareLaunchArgument(
+        "P", default_value="0.0", description="Model Spawn Pitch Value"
+    )
+    declare_spawn_Y = DeclareLaunchArgument(
+        "Y", default_value="0.0", description="Model Spawn Yaw Value"
+    )
     gz_spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
@@ -84,6 +95,12 @@ def generate_launch_description():
             LaunchConfiguration("y"),
             "-z",
             LaunchConfiguration("z"),
+            "-R",
+            LaunchConfiguration("R"),
+            "-P",
+            LaunchConfiguration("P"),
+            "-Y",
+            LaunchConfiguration("Y"),
         ],
         output="screen",
     )
@@ -97,18 +114,18 @@ def generate_launch_description():
             "/cmd_vel" + "@geometry_msgs/msg/Twist" + "@ignition.msgs.Twist",
             "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.Pose_V",
             "/odom" + "@nav_msgs/msg/Odometry" + "[ignition.msgs.Odometry",
-            "/world/demo_world/model/my_robot/joint_state"
+            f"/world/{world}/model/my_robot/joint_state"
             + "@sensor_msgs/msg/JointState"
             + "[ignition.msgs.Model",
             "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
             # "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
-            "/world/demo_world/pose/info"
+            f"/world/{world}/pose/info"
             + "@geometry_msgs/msg/PoseArray"
             + "[ignition.msgs.Pose_V",
         ],
         remappings=[
-            ("/world/demo_world/model/my_robot/joint_state", "/joint_states"),
-            ("/world/demo_world/pose/info", "/pose_info"),
+            (f"/world/{world}/model/my_robot/joint_state", "/joint_states"),
+            (f"/world/{world}/pose/info", "/pose_info"),
         ],
         output="screen",
     )
@@ -134,7 +151,6 @@ def generate_launch_description():
         ],
     )
 
-    world = "demo_world"
     robot_name = "my_robot"
 
     oakd_camera_bridge = Node(
@@ -234,6 +250,9 @@ def generate_launch_description():
             declare_spawn_x,
             declare_spawn_y,
             declare_spawn_z,
+            declare_spawn_R,
+            declare_spawn_P,
+            declare_spawn_Y,
             gz_spawn_entity,
             ign_bridge,
             cam_tf_node,
