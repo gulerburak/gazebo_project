@@ -10,6 +10,7 @@ def generate_launch_description():
     package_directory = get_package_share_directory("gazebo_project")
     # path of the robot urdf file
     robot_desc_path = os.path.join(package_directory, "urdf", "robot.urdf")
+    rviz_config_path = os.path.join(package_directory, "rviz", "config.rviz")
 
     # Run robot state publisher
     robot_state_publisher_node = Node(
@@ -43,12 +44,13 @@ def generate_launch_description():
         output="screen",
         emulate_tty=True,
         parameters=[{"use_sim_time": use_sim_time}],
+        arguments=["-d", rviz_config_path],
     )
 
     return LaunchDescription(
         [
-            # joint_state_publisher_node,
-            # robot_state_publisher_node,
+            joint_state_publisher_node,
+            robot_state_publisher_node,
             rviz_node,
         ]
     )
