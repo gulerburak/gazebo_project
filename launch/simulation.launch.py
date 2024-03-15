@@ -118,6 +118,7 @@ def generate_launch_description():
             + "@sensor_msgs/msg/JointState"
             + "[ignition.msgs.Model",
             "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
+            "/navsat" + "@sensor_msgs/msg/NavSatFix" + "[ignition.msgs.NavSat",
             # "/laser/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
             f"/world/{world}/pose/info"
             + "@geometry_msgs/msg/PoseArray"
@@ -128,6 +129,27 @@ def generate_launch_description():
             (f"/world/{world}/pose/info", "/pose_info"),
         ],
         output="screen",
+    )
+
+    navsat_tf_node = Node(
+        name="navsat_stf",
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        output="screen",
+        arguments=[
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "link_chassis",
+            "my_robot/base_link/navsat_sensor",
+        ],
+        remappings=[
+            ("/tf", "tf"),
+            ("/tf_static", "tf_static"),
+        ],
     )
 
     cam_tf_node = Node(

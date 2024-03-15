@@ -21,7 +21,8 @@
     <visual name="chassis_visual">
       <origin rpy="1.57 0 1.57" xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://gazebo_project/meshes/smart_car.obj" scale="0.012 0.012
+        <mesh filename="package://gazebo_project/meshes/smart_car.obj"
+          scale="0.012 0.012
         0.013" />
       </geometry>
       <material name="white">
@@ -290,6 +291,21 @@
       name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
-
   </gazebo>
+
+  <!-- NavSat -->
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-navsat-system"
+      name="ignition::gazebo::systems::NavSat">
+    </plugin>
+  </gazebo>
+  <gazebo reference="link_chassis">
+    <sensor name="navsat_sensor" type="navsat">
+      <always_on>1</always_on>
+      <update_rate>1</update_rate>
+      <topic>navsat</topic>
+    </sensor>
+  </gazebo>
+
 </robot>

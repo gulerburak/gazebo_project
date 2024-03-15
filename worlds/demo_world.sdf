@@ -3,6 +3,18 @@
 <sdf version="1.8">
 
     <world name="demo_world">
+
+        <!-- Properties for NavSat sensor -->
+        <spherical_coordinates>
+            <surface_model>EARTH_WGS84</surface_model>
+            <world_frame_orientation>ENU</world_frame_orientation>
+            <latitude_deg>41.10410</latitude_deg>
+            <longitude_deg>29.02376</longitude_deg>
+            <elevation>0</elevation>
+            <heading_deg>0</heading_deg>
+        </spherical_coordinates>
+
+
         <!-- Ground Plane -->
         <model name='ground_plane'>
             <pose>0 0 0 0 0 0</pose>
@@ -78,6 +90,24 @@
             </uri>
             <name>apartment</name>
             <pose>20 0 0 0 0 0</pose>
+        </include>
+
+        <!-- Cones -->
+        <include>
+            <uri>
+                https://fuel.gazebosim.org/1.0/OpenRobotics/models/Construction Cone
+            </uri>
+            <name>cone_1</name>
+            <pose>2 -2 0 0 0 0</pose>
+        </include>
+
+        <include>
+            <uri>
+                https://fuel.gazebosim.org/1.0/adlarkin/models/Construction Cone Label Test
+
+            </uri>
+            <pose>4 -2 0 0 0 0</pose>
+
         </include>
     </world>
 </sdf>
