@@ -68,11 +68,14 @@ Then, move `smart_car.obj` file from this repo to `gazebo_project/meshes` direct
 
 ---
 ## Creating the robot
-Inside of the URDF file, add the xml and robot tags.
+Inside of the URDF file, add the xml and robot tags. Include the "common_properties.urdf" file that contains useful urdf macros.
 
 ```xml
 <?xml version="1.0"?>
-<robot name="robot">
+
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find gazebo_project)/urdf/common_properties.urdf.xacro" />
+
 
 </robot>
 ```
@@ -80,29 +83,20 @@ Inside of the URDF file, add the xml and robot tags.
 **The rest of pieces will be added inside the `<robot></robot>` tag.**
 Adding the dummy base link:
 ```xml
-    <link name="base_link"></link>
+  <link name="base_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
 ```
 Adding the chassis link.
 Chassis' visual will be a .obj file named smart_car.obj that located in meshes folder in the project. The material tag that located inside of the visual properties ensure the lightning of the car is correct and working. 
 ```xml
 <link name="link_chassis">
-    <inertial>
-      <mass value="500.0" />
-      <origin xyz="0 0 0.46" rpy="0 0 0" />
-      <inertia ixx="1000.0" ixy="0.0" iyy="200.0" ixz="0.0" iyz="0.0" izz="1000.0" />
-    </inertial>
-
-    <collision>
-      <origin xyz="0 0 0.625" rpy="0 0 0" />
-      <geometry>
-        <box size="1.0 1.0 0.5" />
-      </geometry>
-    </collision>
-
     <visual name="chassis_visual">
       <origin rpy="1.57 0 1.57" xyz="0 0 0" />
       <geometry>
-        <mesh filename="package://gazebo_project/meshes/smart_car.obj" scale="0.012 0.012 0.013" />
+        <mesh filename="package://gazebo_project/meshes/smart_car.obj"
+          scale="0.012 0.012
+        0.013" />
       </geometry>
       <material name="white">
         <lighting>true</lighting>
@@ -111,6 +105,17 @@ Chassis' visual will be a .obj file named smart_car.obj that located in meshes f
         <color rgba="0.9 0.9 0.9 1.0" />
       </material>
     </visual>
+
+    <collision>
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+      <geometry>
+        <box size="2.4 1.0 1.0" />
+      </geometry>
+    </collision>
+
+    <xacro:inertial_cuboid_with_pose mass="500.0" x="2.4" y="1.0" z="1.0">
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+    </xacro:inertial_cuboid_with_pose>
   </link>
 ```
 Connect `base_link` and `link_chassis`.
@@ -129,11 +134,7 @@ Connect `base_link` and `link_chassis`.
 - Rear left wheel link
 ```xml
   <link name="rear_left_wheel">
-    <inertial>
-      <mass value="11.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
-
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
     <visual name="rear_left_wheel_visual">
       <geometry>
         <cylinder radius="0.25" length="0.15" />
@@ -142,7 +143,6 @@ Connect `base_link` and `link_chassis`.
         <color rgba="0.1 0.1 0.1 1" />
       </material>
     </visual>
-
     <collision>
       <geometry>
         <sphere radius="0.25" />
@@ -155,15 +155,13 @@ Connect `base_link` and `link_chassis`.
       </friction>
     </collision>
   </link>
+
 ```
 
 - Rear right wheel link
 ```xml
   <link name="rear_right_wheel">
-    <inertial>
-      <mass value="11.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
 
     <visual name="rear_right_wheel_visual">
       <geometry>
@@ -191,10 +189,7 @@ Connect `base_link` and `link_chassis`.
 - Front left wheel link
 ```xml
   <link name="front_left_wheel">
-    <inertial>
-      <mass value="11.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
 
     <visual name="front_left_wheel_visual">
       <geometry>
@@ -222,10 +217,7 @@ Connect `base_link` and `link_chassis`.
 - Front right wheel link
 ```xml
   <link name="front_right_wheel">
-    <inertial>
-      <mass value="11.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
 
     <visual name="front_right_wheel_visual">
       <geometry>
@@ -255,19 +247,13 @@ The front wheels also need a steering link.
 - Front left wheel steering link 
 ```xml
   <link name="front_left_wheel_steering_link">
-    <inertial>
-      <mass value="1.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
   </link>
 ```
 - Front right wheel steering link
 ```xml
   <link name="front_right_wheel_steering_link">
-    <inertial>
-      <mass value="1.0" />
-      <inertia ixx="0.58" ixy="0.0" iyy="0.33" ixz="0.0" iyz="0.0" izz="0.33" />
-    </inertial>
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
   </link>
 ```
 
