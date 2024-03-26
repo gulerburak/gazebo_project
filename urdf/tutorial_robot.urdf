@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find gazebo_project)/urdf/common_properties.urdf.xacro" />
+
+  <link name="base_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
+
+  <!-- Chassis -->
+  <link name="link_chassis">
+    <visual name="chassis_visual">
+      <origin rpy="1.57 0 1.57" xyz="0 0 0" />
+      <geometry>
+        <mesh filename="package://gazebo_project/meshes/smart_car.obj"
+          scale="0.012 0.012
+        0.013" />
+      </geometry>
+      <material name="white">
+        <lighting>true</lighting>
+        <cast_shadows>true</cast_shadows>
+        <receive_shadows>true</receive_shadows>
+        <color rgba="0.9 0.9 0.9 1.0" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+      <geometry>
+        <box size="2.4 1.0 1.0" />
+      </geometry>
+    </collision>
+
+    <xacro:inertial_cuboid_with_pose mass="500.0" x="2.4" y="1.0" z="1.0">
+      <origin xyz="0 0 0.625" rpy="0 0 0" />
+    </xacro:inertial_cuboid_with_pose>
+  </link>
+
+  <joint name="joint_base_link_chassis" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <child link="link_chassis" />
+    <parent link="base_link" />
+  </joint>
+
+  <!-- Rear Left Wheel -->
+
+  <link name="rear_left_wheel">
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+    <visual name="rear_left_wheel_visual">
+      <geometry>
+        <cylinder radius="0.25" length="0.15" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.25" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+
+  <joint type="revolute" name="rear_left_wheel_joint">
+    <origin rpy="1.56 0 0" xyz="-0.9 0.64 0.25" />
+    <child link="rear_left_wheel" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308"
+      effort="100000" velocity="1000" />
+  </joint>
+
+
+  <!-- Rear Right Wheel -->
+  <link name="rear_right_wheel">
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
+    <visual name="rear_right_wheel_visual">
+      <geometry>
+        <cylinder radius="0.25" length="0.15" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.25" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <joint type="revolute" name="rear_right_wheel_joint">
+    <origin rpy="1.56 0 0" xyz="-0.9 -0.64 0.25" />
+    <child link="rear_right_wheel" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308"
+      effort="100000" velocity="1000" />
+  </joint>
+
+
+  <!-- Front Left Wheel -->
+  <link name="front_left_wheel">
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
+    <visual name="front_left_wheel_visual">
+      <geometry>
+        <cylinder radius="0.25" length="0.15" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.25" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <link name="front_left_wheel_steering_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
+
+  <joint type="revolute" name="front_left_wheel_steering_joint">
+    <origin rpy="-1.56 0 0" xyz="0.9 0.64 0.25" />
+    <child link="front_left_wheel_steering_link" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 -1 0" />
+    <limit effort="100000" velocity="1000" upper="0.8727" lower="-0.8727" />
+  </joint>
+
+  <joint type="revolute" name="front_left_wheel_rotating_joint">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <child link="front_left_wheel" />
+    <parent link="front_left_wheel_steering_link" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308" effort="100000" velocity="1000" />
+  </joint>
+
+  <!-- Front Right Wheel -->
+  <link name="front_right_wheel">
+    <xacro:inertial_cylinder mass="11.0" radius="0.25" length="0.15" />
+
+    <visual name="front_right_wheel_visual">
+      <geometry>
+        <cylinder radius="0.25" length="0.15" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.25" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <link name="front_right_wheel_steering_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
+
+  <joint type="revolute" name="front_right_wheel_steering_joint">
+    <origin rpy="-1.56 0 0" xyz="0.9 -0.64 0.25" />
+    <child link="front_right_wheel_steering_link" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 -1 0" />
+    <limit effort="100000" velocity="1000" upper="0.8727" lower="-0.8727" />
+  </joint>
+
+  <joint type="revolute" name="front_right_wheel_rotating_joint">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <child link="front_right_wheel" />
+    <parent link="front_right_wheel_steering_link" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308" effort="100000" velocity="1000" />
+    <joint_properties damping="1.0" friction="1.0" />
+  </joint>
+
+
+  <!-- Ackermann steering plugin -->
+  <gazebo>
+    <plugin filename="ignition-gazebo-ackermann-steering-system"
+      name="ignition::gazebo::systems::AckermannSteering">
+      <topic>/cmd_vel</topic>
+      <odom_publish_frequency>10</odom_publish_frequency>
+      <odom_topic>odom</odom_topic>
+      <left_joint>front_left_wheel_rotating_joint</left_joint>
+      <right_joint>front_right_wheel_rotating_joint</right_joint>
+      <left_steering_joint>front_left_wheel_steering_joint</left_steering_joint>
+      <right_steering_joint>front_right_wheel_steering_joint</right_steering_joint>
+      <kingpin_width>1.0</kingpin_width>
+      <steering_limit>0.8</steering_limit>
+      <wheel_base>1.0</wheel_base>
+      <wheel_separation>1.572</wheel_separation>
+      <wheel_radius>0.31265</wheel_radius>
+      <min_velocity>-10</min_velocity>
+      <max_velocity>100</max_velocity>
+      <min_acceleration>-30</min_acceleration>
+      <max_acceleration>30</max_acceleration>
+    </plugin>
+  </gazebo>
+
+
+  <!-- Joint states plugin -->
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-state-publisher-system"
+      name="ignition::gazebo::systems::JointStatePublisher" />
+  </gazebo>
+
+  <!-- IMU Plugin -->
+  <gazebo>
+    <plugin filename="ignition-gazebo-imu-system"
+      name="ignition::gazebo::systems::Imu">
+    </plugin>
+  </gazebo>
+  <gazebo reference="link_chassis">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>20</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+
+
+</robot>
