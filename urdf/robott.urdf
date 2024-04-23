@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:include filename="$(find gazebo_project)/urdf/common_properties.urdf.xacro" />
+
+    <link name="base_link">
+        <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+    </link>
+
+    <!-- 
+        SOLUTION START
+    -->
+
+
+    <!-- 
+        SOLUTION END
+    -->
+
+
+    <!-- Differential Drive Plugin -->
+    <gazebo>
+        <plugin
+            filename="gz-sim-diff-drive-system"
+            name="gz::sim::systems::DiffDrive">
+            <left_joint>left_wheel_joint</left_joint>
+            <right_joint>right_wheel_joint</right_joint>
+            <wheel_separation>0.60</wheel_separation>
+            <wheel_radius>0.05</wheel_radius>
+            <odom_publish_frequency>1</odom_publish_frequency>
+            <topic>cmd_vel</topic>
+        </plugin>
+    </gazebo>
+
+
+</robot>

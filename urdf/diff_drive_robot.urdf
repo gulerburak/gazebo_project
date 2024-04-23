@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find gazebo_project)/urdf/common_properties.urdf.xacro" />
+
+  <link name="base_link">
+    <xacro:cuboid_inertia mass="1.0" x="0.1" y="0.1" z="0.1" />
+  </link>
+
+  <joint name="joint_base_link_chassis" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <child link="link_chassis" />
+    <parent link="base_link" />
+  </joint>
+
+  <link name="link_chassis">
+    <visual name="chassis_visual">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.1" />
+      <geometry>
+        <box size="0.5 0.5 0.1" />
+      </geometry>
+      <material name="white">
+        <lighting>true</lighting>
+        <cast_shadows>true</cast_shadows>
+        <receive_shadows>true</receive_shadows>
+        <color rgba="0.9 0.9 0.9 1.0" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.1" />
+
+      <geometry>
+        <box size="0.5 0.5 0.1" />
+
+      </geometry>
+    </collision>
+
+    <xacro:inertial_cuboid_with_pose mass="1.0" x="0.5" y="0.5" z="0.1">
+      <origin xyz="0 0 0.1" rpy="0 0 0" />
+    </xacro:inertial_cuboid_with_pose>
+  </link>
+
+  <link name="rear_left_wheel">
+
+    <xacro:inertial_cylinder mass="0.1" radius="0.05" length="0.05" />
+
+    <visual name="rear_left_wheel_visual">
+      <geometry>
+        <cylinder radius="0.05" length="0.05" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.05" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+
+  </link>
+
+
+  <joint type="revolute" name="left_wheel_joint">
+    <origin rpy="-1.56 0 0" xyz="0.0 0.30 0.0" />
+
+    <child link="rear_left_wheel" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308"
+      effort="100000" velocity="1000" />
+  </joint>
+
+
+  <!-- Rear Right Wheel -->
+  <link name="rear_right_wheel">
+    <xacro:inertial_sphere mass="0.1" radius="0.04" />
+
+    <visual name="rear_right_wheel_visual">
+      <geometry>
+        <cylinder radius="0.05" length="0.05" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.05" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <joint type="revolute" name="right_wheel_joint">
+    <origin rpy="-1.56 0 0" xyz="0.0 -0.30 0.0" />
+
+    <child link="rear_right_wheel" />
+    <parent link="link_chassis" />
+    <axis rpy="0 0 0" xyz="0 0 1" />
+    <limit lower="-1.79769e+308" upper="1.79769e+308"
+      effort="100000" velocity="1000" />
+  </joint>
+
+  <!-- Front Caster Wheel -->
+
+  <link name="caster_wheel_front">
+    <xacro:inertial_sphere mass="0.1" radius="0.04" />
+
+
+    <visual name="caster_wheel_visual">
+      <geometry>
+        <sphere radius="0.04" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.04" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>0.0</mu>
+          <mu2>0.0</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <joint type="fixed" name="caster_wheel_front_joint">
+    <origin rpy="0 0 0" xyz="0.25 0.0 0.0" />
+    <parent link="link_chassis" />
+    <child link="caster_wheel_front" />
+  </joint>
+
+  <!-- Rear Caster Wheel -->
+
+  <link name="caster_wheel_rear">
+    <xacro:inertial_cylinder mass="0.1" radius="0.05" length="0.05" />
+
+    <visual name="caster_wheel_visual">
+      <geometry>
+        <sphere radius="0.04" />
+      </geometry>
+      <material name="Black">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <sphere radius="0.04" />
+      </geometry>
+      <friction>
+        <ode>
+          <mu>0.0</mu>
+          <mu2>0.0</mu2>
+        </ode>
+      </friction>
+    </collision>
+  </link>
+
+  <joint type="fixed" name="caster_wheel_rear_joint">
+    <origin rpy="0 0 0" xyz="-0.25 0.0 0.0" />
+    <parent link="link_chassis" />
+    <child link="caster_wheel_rear" />
+  </joint>
+
+
+  <!-- Differential Drive Plugin -->
+  <gazebo>
+    <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.60</wheel_separation>
+      <wheel_radius>0.05</wheel_radius>
+      <odom_publish_frequency>1</odom_publish_frequency>
+      <topic>cmd_vel</topic>
+    </plugin>
+  </gazebo>
+
+
+</robot>
