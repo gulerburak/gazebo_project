@@ -241,6 +241,13 @@ def generate_launch_description():
         ],
     )
 
+    odometry_tf = Node(
+        package="gazebo_project",
+        executable="odometry_tf",
+        name="odometry_tf",
+        output="screen",
+    )
+
     return LaunchDescription(
         [
             SetParameter(name="use_sim_time", value=True),
@@ -257,5 +264,6 @@ def generate_launch_description():
             ign_bridge,
             cam_tf_node,
             oakd_camera_bridge,
+            odometry_tf,
         ]
     )
